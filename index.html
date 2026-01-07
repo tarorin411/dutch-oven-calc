@@ -251,6 +251,39 @@
             transform: translateY(0);
         }
 
+        .shop-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .shop-buttons .btn-shop {
+            flex: 1;
+            margin-top: 0;
+            font-size: 14px;
+            padding: 12px 10px;
+        }
+
+        .btn-amazon {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+        }
+
+        .btn-rakuten {
+            background: linear-gradient(135deg, #bf0000 0%, #8b0000 100%);
+            box-shadow: 0 4px 15px rgba(191, 0, 0, 0.3);
+        }
+
+        .btn-rakuten:hover {
+            box-shadow: 0 6px 20px rgba(191, 0, 0, 0.4);
+        }
+
+        .rakuten-widget {
+            margin-top: 20px;
+            text-align: center;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+
         .tip-box {
             background: rgba(0, 0, 0, 0.2);
             border-radius: 8px;
@@ -385,9 +418,22 @@
             </div>
         </div>
 
-        <a href="https://www.amazon.co.jp/s?k=ダッチオーブン&tag=ljooj-22" class="btn-shop">
-            🛒 Amazonでダッチオーブンを見る
-        </a>
+        <div class="shop-buttons">
+            <a href="https://www.amazon.co.jp/s?k=ダッチオーブン&tag=ljooj-22" target="_blank" class="btn-shop btn-amazon">
+                🛒 Amazonで見る
+            </a>
+            <a href="https://af.moshimo.com/af/c/click?a_id=5329664&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2583%2580%25E3%2583%2583%25E3%2583%2581%25E3%2582%25AA%25E3%2583%25BC%25E3%2583%2596%25E3%2583%25B3%2F"
+                target="_blank" class="btn-shop btn-rakuten">
+                🛒 楽天で見る
+            </a>
+        </div>
+
+        <!-- 楽天おすすめウィジェット -->
+        <div class="rakuten-widget">
+            <script
+                type="text/javascript">MafRakutenWidgetParam = function () { return { size: '468x160', design: 'slide', recommend: 'on', auto_mode: 'on', a_id: '5329664', border: 'off' }; };</script>
+            <script type="text/javascript" src="//image.moshimo.com/static/publish/af/rakuten/widget.js"></script>
+        </div>
 
         <p class="note">
             ※計算値は目安です。外気温・風・標高により調整が必要です。<br>
