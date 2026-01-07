@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ダッチオーブン炭計算機 | 温度別ブリケット個数を自動計算</title>
+    <meta name="description"
+        content="ダッチオーブンのサイズと目標温度を入力するだけで、蓋の上と鍋底に置く豆炭（ブリケット）の必要個数を自動計算。ロースト、ベイク、煮込みなど料理に合わせた火加減配分も対応。">
+    <meta name="keywords" content="ダッチオーブン,炭,豆炭,ブリケット,温度,計算,キャンプ,アウトドア,LODGE">
+
+    <!-- OGP -->
+    <meta property="og:title" content="ダッチオーブン炭計算機 | 温度別ブリケット個数を自動計算">
+    <meta property="og:description" content="サイズと目標温度から必要な炭の数を自動計算。上下の配分も料理に合わせて最適化。">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "ダッチオーブン炭計算機",
+        "description": "ダッチオーブンのサイズと目標温度から必要な炭の数を自動計算",
+        "url": "https://dutch-oven-calc.pages.dev/",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Web Browser"
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #3e2723;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #bcaaa4;
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .back-link:hover {
+            color: #ffccbc;
+        }
+
+        .container {
+            background-color: #5d4037;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        h1 {
+            font-size: 22px;
+            text-align: center;
+            margin-bottom: 25px;
+            color: #ffccbc;
+            border-bottom: 2px solid #8d6e63;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #ffccbc;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #8d6e63;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background: #efebe9;
+            color: #3e2723;
+        }
+
+        /* 洗練されたスライダー */
+        .slider-container {
+            position: relative;
+            padding: 15px 0;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 12px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(90deg, #5d4037 0%, #8d6e63 50%, #ff5722 100%);
+            border-radius: 6px;
+            outline: none;
+            cursor: pointer;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            background: radial-gradient(circle at 30% 30%, #ffccbc, #ff5722);
+            border: 3px solid #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 87, 34, 0.6), 0 2px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255, 87, 34, 0.8), 0 3px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
+            background: radial-gradient(circle at 30% 30%, #ffccbc, #ff5722);
+            border: 3px solid #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 87, 34, 0.6), 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="range"]::-moz-range-track {
+            height: 12px;
+            background: linear-gradient(90deg, #5d4037 0%, #8d6e63 50%, #ff5722 100%);
+            border-radius: 6px;
+        }
+
+        .temp-display {
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffccbc;
+            margin-top: 12px;
+            text-shadow: 0 0 10px rgba(255, 204, 188, 0.3);
+        }
+
+        .temp-display .fahrenheit {
+            font-size: 16px;
+            color: #bcaaa4;
+            font-weight: normal;
+        }
+
+        .result-box {
+            background-color: #3e2723;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 25px;
+            border: 2px solid #a1887f;
+            text-align: center;
+        }
+
+        .result-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #ffccbc;
+        }
+
+        .coal-visual {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 20px 0;
+        }
+
+        .coal-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .coal-label {
+            font-size: 13px;
+            color: #bcaaa4;
+            margin-bottom: 10px;
+        }
+
+        .coal-circle {
+            width: 80px;
+            height: 80px;
+            background: #212121;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: #ff5722;
+            border: 4px solid #ff5722;
+            box-shadow: 0 0 15px rgba(255, 87, 34, 0.5);
+        }
+
+        .total-info {
+            font-size: 14px;
+            color: #bcaaa4;
+            margin-top: 15px;
+        }
+
+        .total-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffccbc;
+        }
+
+        .btn-shop {
+            display: block;
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            color: #fff;
+            text-decoration: none;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-shop:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+        }
+
+        .btn-shop:active {
+            transform: translateY(0);
+        }
+
+        .tip-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .tip-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ffccbc;
+            margin-bottom: 8px;
+        }
+
+        .tip-content {
+            font-size: 12px;
+            color: #bcaaa4;
+            line-height: 1.6;
+        }
+
+        .note {
+            font-size: 11px;
+            color: #a1887f;
+            margin-top: 20px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        /* フッター */
+        .site-footer {
+            background: linear-gradient(135deg, #3e2723 0%, #5d4037 100%);
+            padding: 40px 20px;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.9);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .footer-section {
+            margin-bottom: 25px;
+        }
+
+        .footer-section h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #ffccbc;
+        }
+
+        .footer-section p {
+            font-size: 12px;
+            line-height: 1.8;
+            color: #bcaaa4;
+        }
+
+        .footer-section a {
+            color: #ffccbc;
+            text-decoration: underline;
+        }
+
+        .copyright {
+            text-align: center;
+            font-size: 11px;
+            color: #8d6e63;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="https://kurashi-calc.pages.dev/" class="back-link">← くらしの計算機に戻る</a>
+
+    <div class="container">
+        <h1>🔥 ダッチオーブン炭計算機</h1>
+
+        <div class="form-group">
+            <label>オーブンのサイズ (インチ)</label>
+            <select id="size" onchange="calc()">
+                <option value="8">8インチ (約20cm)</option>
+                <option value="10" selected>10インチ (約25cm)</option>
+                <option value="12">12インチ (約30cm)</option>
+                <option value="14">14インチ (約35cm)</option>
+                <option value="16">16インチ (約40cm)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>調理方法</label>
+            <select id="method" onchange="calc()">
+                <option value="bake" selected>ベイク（パン・ピザ・ケーキ）</option>
+                <option value="roast">ロースト（肉・野菜）</option>
+                <option value="stew">煮込み・シチュー</option>
+                <option value="fry">揚げ物・炒め物</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>目標温度</label>
+            <input type="range" id="tempRange" min="150" max="230" step="10" value="180"
+                oninput="updateTempDisplay(); calc();">
+            <div class="temp-display">
+                <span id="tempDisplay">180</span>℃ <span style="font-size:14px; color:#bcaaa4;">(<span
+                        id="tempF">356</span>°F)</span>
+            </div>
+        </div>
+
+        <div class="result-box">
+            <div class="result-title">必要なチャコールブリケット数</div>
+
+            <div class="coal-visual">
+                <div class="coal-group">
+                    <div class="coal-label">フタの上（Top）</div>
+                    <div class="coal-circle" id="topCoals">0</div>
+                </div>
+                <div class="coal-group">
+                    <div class="coal-label">鍋の下（Bottom）</div>
+                    <div class="coal-circle" id="bottomCoals">0</div>
+                </div>
+            </div>
+
+            <div class="total-info">
+                合計: <span class="total-number" id="totalCoals">0</span> 個
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <div class="tip-title">💡 配置のコツ</div>
+            <div class="tip-content" id="tipContent">
+                フタの上はリング状に均等配置。鍋底は中心を避けてリング状に並べると焦げ付きを防げます。
+            </div>
+        </div>
+
+        <a href="https://www.amazon.co.jp/s?k=ダッチオーブン&tag=ljooj-22" class="btn-shop">
+            🛒 Amazonでダッチオーブンを見る
+        </a>
+
+        <p class="note">
+            ※計算値は目安です。外気温・風・標高により調整が必要です。<br>
+            ※30〜45分ごとに炭を補充してください。
+        </p>
+
+        <footer class="site-footer">
+            <div class="footer-section">
+                <h4>プライバシーポリシー</h4>
+                <p>当サイトでは、Googleアナリティクス等のアクセス解析ツールを使用しています。これらのツールはCookieを使用してデータを収集しますが、個人を特定する情報は含まれません。</p>
+            </div>
+            <div class="footer-section">
+                <h4>免責事項</h4>
+                <p>当サイトの計算結果は参考値であり、実際の使用状況により異なる場合があります。当サイトを利用したことによる損害について、運営者は一切の責任を負いません。</p>
+                <p>当サイトはAmazonアソシエイトプログラムに参加しています。</p>
+            </div>
+            <div class="footer-section">
+                <h4>運営者情報</h4>
+                <p>運営者: LJO<br>
+                    お問い合わせ: <a href="mailto:LJO.dev.contact@gmail.com">LJO.dev.contact@gmail.com</a></p>
+            </div>
+            <p class="copyright">© 2026 LJO. All rights reserved.</p>
+        </footer>
+    </div>
+
+
+
+    <script>
+        function updateTempDisplay() {
+            const tempC = parseInt(document.getElementById('tempRange').value);
+            const tempF = Math.round(tempC * 9 / 5 + 32);
+            document.getElementById('tempDisplay').innerText = tempC;
+            document.getElementById('tempF').innerText = tempF;
+        }
+
+        function calc() {
+            const size = parseInt(document.getElementById('size').value);
+            const method = document.getElementById('method').value;
+            const targetTempC = parseInt(document.getElementById('tempRange').value);
+            const targetTempF = Math.round(targetTempC * 9 / 5 + 32);
+
+            // 基準: 350°F (177°C) = サイズ × 2 個
+            // 調整: 25°F ごとに 2個 増減
+            const baseTempF = 350;
+            const baseCoals = size * 2;
+            const tempDiffF = targetTempF - baseTempF;
+            const adjust = Math.round(tempDiffF / 25) * 2;
+
+            let total = baseCoals + adjust;
+            if (total < size) total = size; // 最低個数
+
+            let top = 0;
+            let bottom = 0;
+            let tip = '';
+
+            // 調理方法による配分
+            if (method === 'bake') {
+                // ベイク: 上2/3、下1/3 (約3:1)
+                bottom = Math.round(total / 4);
+                top = total - bottom;
+                tip = 'ベイクでは上火を強めに。フタの上にリング状に並べ、底は焦げ防止のため少なめに。';
+            } else if (method === 'roast') {
+                // ロースト: 上下均等 (1:1)
+                bottom = Math.round(total / 2);
+                top = total - bottom;
+                tip = 'ローストは上下均等な熱が理想。15分ごとにオーブンを1/4回転させましょう。';
+            } else if (method === 'stew') {
+                // 煮込み: 下火メイン (上1:下3)
+                top = Math.round(total / 4);
+                bottom = total - top;
+                tip = '煮込みは下火中心で。フタに数個置くと水滴が落ちて味が均一になります。';
+            } else if (method === 'fry') {
+                // 揚げ物: 下火のみ
+                bottom = total;
+                top = 0;
+                tip = '揚げ物は下火のみ。油の温度を安定させるため、炭を等間隔に配置しましょう。';
+            }
+
+            // 表示更新
+            document.getElementById('topCoals').innerText = top;
+            document.getElementById('bottomCoals').innerText = bottom;
+            document.getElementById('totalCoals').innerText = total;
+            document.getElementById('tipContent').innerText = tip;
+        }
+
+        // 初期実行
+        updateTempDisplay();
+        calc();
+    </script>
+
+</body>
+
+</html>
